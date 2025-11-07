@@ -1,0 +1,27 @@
+# MacOS
+.DS_Store
+
+# Quartus compiler generated files
+db/
+incremental_db/
+output_files/
+greybox_tmp/
+*.rpt
+*.summary
+*.smsg
+*.eqn
+*.pin
+*.sof
+*.pof
+*.jic
+*.jam
+*.pmsf
+*.sld
+*.qarlog
+
+# Quartus simulation generated files
+simulation/modelsim
+
+# Quartus user session files
+*.qws
+*.swp

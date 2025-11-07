@@ -1,0 +1,291 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/2345Downloads/550/homework/checkpoint5/simple-processor-main (2)/simple-processor-main
+valu
+Z1 !s110 1762293319
+!i10b 1
+!s100 ABE35?J2Bf8:1=9<CMg[<3
+I]oKE^L:oz4T>_o4?lOj2=2
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z3 w1762289559
+Z4 8alu.v
+Z5 Falu.v
+L0 1
+Z6 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z7 !s108 1762293319.000000
+Z8 !s107 alu.v|
+Z9 !s90 -reportprogress|300|alu.v|
+!i113 1
+Z10 tCvgOpt 0
+vcla32
+Z11 !s110 1762293313
+!i10b 1
+!s100 7MgZ`Soe6?I@N8IJe8;]S2
+If>EaNLY=jRkh^`iVLVS>l2
+R2
+R0
+R3
+Z12 8cla.v
+Z13 Fcla.v
+L0 1
+R6
+r1
+!s85 0
+31
+Z14 !s108 1762293313.000000
+Z15 !s107 cla.v|
+Z16 !s90 -reportprogress|300|cla.v|
+!i113 1
+R10
+vcla8
+R11
+!i10b 1
+!s100 ;3Qz0CV[ZhhG8bnW>9KIO1
+IgkYiYn_:Jmn1iHFBnaEgb2
+R2
+R0
+R3
+R12
+R13
+L0 56
+R6
+r1
+!s85 0
+31
+R14
+R15
+R16
+!i113 1
+R10
+vcla_sum4
+R11
+!i10b 1
+!s100 kZkR0=RUUjg>@=P3hdkf13
+IE@1iN_4PZV=n5]7_I6SBX2
+R2
+R0
+R3
+R12
+R13
+L0 96
+R6
+r1
+!s85 0
+31
+R14
+R15
+R16
+!i113 1
+R10
+vclk_div2N
+!s110 1762293300
+!i10b 1
+!s100 9YX5WhTB^i;;2alM]6m`[1
+IL0dS6?9ZAf`XnZUAe?Pa_3
+R2
+R0
+R3
+8clk_div.v
+Fclk_div.v
+L0 1
+R6
+r1
+!s85 0
+31
+!s108 1762293300.000000
+!s107 clk_div.v|
+!s90 -reportprogress|300|clk_div.v|
+!i113 1
+R10
+nclk_div2@n
+vcmp_const
+!s110 1762293307
+!i10b 1
+!s100 22RG]>B_baFA[@IX2B3dk1
+I7<n6e2nz=5SZ=c69Dka0>0
+R2
+R0
+R3
+8cmp_const.v
+Fcmp_const.v
+L0 1
+R6
+r1
+!s85 0
+31
+!s108 1762293307.000000
+!s107 cmp_const.v|
+!s90 -reportprogress|300|cmp_const.v|
+!i113 1
+R10
+vcpu_cp5_test
+!s110 1762293562
+!i10b 1
+!s100 HQUY00]CEoZQ`XZk>g;io2
+IelUnYJ_2>?TdXdRgOjcMS3
+R2
+R0
+w1762289830
+Z17 8cpu_cp5_test_tb.v
+Z18 Fcpu_cp5_test_tb.v
+Z19 L0 13
+R6
+r1
+!s85 0
+31
+!s108 1762293562.000000
+!s107 cpu_cp5_test_tb.v|
+Z20 !s90 -reportprogress|300|cpu_cp5_test_tb.v|
+!i113 1
+R10
+vcpu_cp5_test_tb
+!s110 1762293590
+!i10b 1
+!s100 k5Fg^H7aS0Cl?Rzm`>IVI0
+IFMlO8]QUM<ZD]m=Wk]V1Y0
+R2
+R0
+w1762293580
+R17
+R18
+R19
+R6
+r1
+!s85 0
+31
+!s108 1762293590.000000
+!s107 cpu_cp5_test_tb.v|
+R20
+!i113 1
+R10
+vdffe_ref
+!s110 1762293324
+!i10b 1
+!s100 Lk0?iockZgchKTf6=SRZW0
+I`99I:k:Z7aQ0eocmR?5591
+R2
+R0
+R3
+8dffe.v
+Fdffe.v
+L0 1
+R6
+r1
+!s85 0
+31
+!s108 1762293324.000000
+!s107 dffe.v|
+!s90 -reportprogress|300|dffe.v|
+!i113 1
+R10
+vpg4
+R11
+!i10b 1
+!s100 FaMAYmZBhl[XDf<GC=X_;0
+IJ>DPh[F_n04AVizQMXzCA2
+R2
+R0
+R3
+R12
+R13
+L0 139
+R6
+r1
+!s85 0
+31
+R14
+R15
+R16
+!i113 1
+R10
+vprocessor
+!s110 1762293335
+!i10b 1
+!s100 MMZ5eM2;GCc?ASCVgToff3
+I?IbQ8jiYm]a]YgEa^XPk[1
+R2
+R0
+w1762289698
+8processor.v
+Fprocessor.v
+L0 50
+R6
+r1
+!s85 0
+31
+!s108 1762293335.000000
+!s107 processor.v|
+!s90 -reportprogress|300|processor.v|
+!i113 1
+R10
+vreduce_or32
+R1
+!i10b 1
+!s100 d0lT=LaLGUa7MfjM;iPm>1
+IjY<ZzZJYhGRTd2gO0U0zL2
+R2
+R0
+R3
+R4
+R5
+L0 161
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+vregfile
+!s110 1762293329
+!i10b 1
+!s100 QCcR2h5C4V_T=G@TMIjQK0
+IDDPg3TNJmP>Pm>E4hHbGd0
+R2
+R0
+R3
+8regfile.v
+Fregfile.v
+L0 1
+R6
+r1
+!s85 0
+31
+!s108 1762293329.000000
+!s107 regfile.v|
+!s90 -reportprogress|300|regfile.v|
+!i113 1
+R10
+vskeleton
+!s110 1762293340
+!i10b 1
+!s100 `BLTGDh6>VH[VI_Glae102
+I7aQcKUAkgKQ]n47dBCC]I1
+R2
+R0
+R3
+8skeleton.v
+Fskeleton.v
+L0 9
+R6
+r1
+!s85 0
+31
+!s108 1762293340.000000
+!s107 skeleton.v|
+!s90 -reportprogress|300|skeleton.v|
+!i113 1
+R10

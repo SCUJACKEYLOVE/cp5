@@ -1,0 +1,159 @@
+/**
+ * READ THIS DESCRIPTION!
+ *
+ * The processor takes in several inputs from a skeleton file.
+ *
+ * Inputs
+ * clock: this is the clock for your processor at 50 MHz
+ * reset: we should be able to assert a reset to start your pc from 0 (sync or
+ * async is fine)
+ *
+ * Imem: input data from imem
+ * Dmem: input data from dmem
+ * Regfile: input data from regfile
+ *
+ * Outputs
+ * Imem: output control signals to interface with imem
+ * Dmem: output control signals and data to interface with dmem
+ * Regfile: output control signals and data to interface with regfile
+ *
+ * Notes
+ *
+ * Ultimately, your processor will be tested by subsituting a master skeleton, imem, dmem, so the
+ * testbench can see which controls signal you active when. Therefore, there needs to be a way to
+ * "inject" imem, dmem, and regfile interfaces from some external controller module. The skeleton
+ * file acts as a small wrapper around your processor for this purpose.
+ *
+ * You will need to figure out how to instantiate two memory elements, called
+ * "syncram," in Quartus: one for imem and one for dmem. Each should take in a
+ * 12-bit address and allow for storing a 32-bit value at each address. Each
+ * should have a single clock.
+ *
+ * Each memory element should have a corresponding .mif file that initializes
+ * the memory element to certain value on start up. These should be named
+ * imem.mif and dmem.mif respectively.
+ *
+ * Importantly, these .mif files should be placed at the top level, i.e. there
+ * should be an imem.mif and a dmem.mif at the same level as process.v. You
+ * should figure out how to point your generated imem.v and dmem.v files at
+ * these MIF files.
+ *
+ * imem
+ * Inputs:  12-bit address, 1-bit clock enable, and a clock
+ * Outputs: 32-bit instruction
+ *
+ * dmem
+ * Inputs:  12-bit address, 1-bit clock, 32-bit data, 1-bit write enable
+ * Outputs: 32-bit data at the given address
+ *
+ */
+module processor(
+    // Control signals
+    input         clock,                    // The master clock
+    input         reset,                    // A reset signal
+
+    // Imem
+    output [11:0] address_imem,             // The address of the data to get from imem
+    input  [31:0] q_imem,                   // The data from imem
+
+    // Dmem
+    output [11:0] address_dmem,             // The address of the data to get or put from/to dmem
+    output [31:0] data,                     // The data to write to dmem
+    output        wren,                     // Write enable for dmem
+    input  [31:0] q_dmem,                   // The data from dmem
+
+    // Regfile
+    output        ctrl_writeEnable,         // Write enable for regfile
+    output [4:0]  ctrl_writeReg,            // Register to write to in regfile
+    output [4:0]  ctrl_readRegA,            // Register to read from port A of regfile
+    output [4:0]  ctrl_readRegB,            // Register to read from port B of regfile
+    output [31:0] data_writeReg,            // Data to write to for regfile
+    input  [31:0] data_readRegA,            // Data from port A of regfile
+    input  [31:0] data_readRegB             // Data from port B of regfile
+);
+    // ==================== PC ====================
+    wire [31:0] pc; 
+    wire [31:0] pc_next;    
+
+    cla32 pc_incrementer(
+        .num1(pc), .num2(32'd4), .cin(1'd0),
+        .sum(pc_next), .cout()
+    );
+
+    dffe_ref pc_reg(
+        .data(pc_next),
+        .clk(clock), .enable(1'b1), .clear(reset),
+        .out(pc)
+    );
+
+    // ==================== Decode from Imem ====================
+    assign address_imem = pc[13:2];
+
+    wire [4:0] op_code = q_imem[31:27];
+    wire [4:0] rd = q_imem[26:22];
+    wire [4:0] rs = q_imem[21:17];
+    wire [4:0] rt = q_imem[16:12];
+    wire [4:0] shamt = q_imem[11:7];
+    wire [4:0] func = q_imem[6:2];
+    wire [16:0] immediate = q_imem[16:0];
+    wire [31:0] immediate_sext = {{15{immediate[16]}}, immediate};
+
+    wire op_rtype, op_addi, op_sw, op_lw;
+    cmp_const #(5, 5'b00000) cmp_rtype (op_code, op_rtype);
+    cmp_const #(5, 5'b00101) cmp_addi  (op_code, op_addi);
+    cmp_const #(5, 5'b00111) cmp_sw    (op_code, op_sw);
+    cmp_const #(5, 5'b01000) cmp_lw    (op_code, op_lw);
+
+    // ==================== ALU ====================
+    wire alu_use_immediate = op_addi | op_lw | op_sw;
+    wire [31:0] alu_operandA = data_readRegA;
+    wire [31:0] alu_operandB = alu_use_immediate ? immediate_sext : data_readRegB;
+    // alu opcode 5'b0 is add. We need alu to do addition for addi, lw, and sw
+    wire [4:0]  alu_opcode = op_rtype ? func : 5'b0;
+    wire [4:0]  alu_shiftamt = shamt;
+    wire [31:0] alu_result;
+    wire        alu_overflow;
+
+    alu alu_inst (
+        .data_operandA(alu_operandA),
+        .data_operandB(alu_operandB),
+        .ctrl_ALUopcode(alu_opcode),
+        .ctrl_shiftamt(alu_shiftamt),
+        .data_result(alu_result),
+        .isNotEqual(),
+        .isLessThan(),
+        .overflow(alu_overflow)
+    );
+
+    // ==================== Dmem ====================
+    assign address_dmem = alu_result[11:0];
+    assign data = data_readRegB;
+    assign wren = op_sw;
+
+    // ==================== Regfile ====================
+    // Overflow detection for add, sub, addi
+    wire func_add, func_sub;
+    cmp_const #(5, 5'b00000) cmp_func_add (func, func_add);
+    cmp_const #(5, 5'b00001) cmp_func_sub (func, func_sub);
+
+    wire overflow_add = op_rtype & func_add & alu_overflow;
+    wire overflow_sub = op_rtype & func_sub & alu_overflow;
+    wire overflow_addi = op_addi & alu_overflow;
+    wire overflow_any = overflow_add | overflow_sub | overflow_addi;
+
+    // When alu overflow occurs, we need to write status code into r30
+    // Otherwise, only rtype, addi, and lw write to regfile
+    assign ctrl_writeEnable = overflow_any ? 1'b1 : (op_rtype | op_addi | op_lw);
+    assign ctrl_writeReg = overflow_any ? 5'd30 : rd;
+    assign ctrl_readRegA = rs;
+    // only rtype reads rt to perform operation
+    assign ctrl_readRegB = op_rtype ? rt : rd;
+
+    wire [31:0] normal_wdata = op_lw ? q_dmem : alu_result;
+    wire [31:0] overflow_status =
+        overflow_add ? 32'd1 :
+        overflow_addi ? 32'd2 :
+        overflow_sub ? 32'd3 : 32'd0;
+
+    assign data_writeReg = overflow_any ? overflow_status : normal_wdata;
+endmodule
