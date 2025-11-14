@@ -72,8 +72,7 @@ module skeleton(
     processor my_processor(
         // Control signals
         processor_clock,                // I: The master clock
-        reset,                          // I: A reset signal
-        regfile_clock,   
+        reset,                          // I: A reset signal 
         // Imem
         address_imem,                   // O: The address of the data to get from imem
         q_imem,                         // I: The data from imem

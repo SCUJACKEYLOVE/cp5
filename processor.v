@@ -49,28 +49,53 @@
  */
 module processor(
     // Control signals
-    input         clock,
-    input         reset,
-    input         regfile_clock,
+    clock,                          // I: The master clock
+    reset,                          // I: A reset signal
+
     // Imem
-    output [11:0] address_imem,
-    input  [31:0] q_imem,
+    address_imem,                   // O: The address of the data to get from imem
+    q_imem,                         // I: The data from imem
 
     // Dmem
-    output [11:0] address_dmem,
-    output [31:0] data,
-    output        wren,
-    input  [31:0] q_dmem,
+    address_dmem,                   // O: The address of the data to get or put from/to dmem
+    data,                           // O: The data to write to dmem
+    wren,                           // O: Write enable for dmem
+    q_dmem,                         // I: The data from dmem
 
     // Regfile
-    output        ctrl_writeEnable,
-    output [4:0]  ctrl_writeReg,
-    output [4:0]  ctrl_readRegA,
-    output [4:0]  ctrl_readRegB,
-    output [31:0] data_writeReg,
-    input  [31:0] data_readRegA,
-    input  [31:0] data_readRegB
+    ctrl_writeEnable,               // O: Write enable for regfile
+    ctrl_writeReg,                  // O: Register to write to in regfile
+    ctrl_readRegA,                  // O: Register to read from port A of regfile
+    ctrl_readRegB,                  // O: Register to read from port B of regfile
+    data_writeReg,                  // O: Data to write to for regfile
+    data_readRegA,                  // I: Data from port A of regfile
+    data_readRegB                   // I: Data from port B of regfile
 );
+
+    // ==================== Port Declarations ====================
+
+    // Control signals
+    input clock, reset;
+
+    // Imem
+    output [11:0] address_imem;
+    input  [31:0] q_imem;
+
+    // Dmem
+    output [11:0] address_dmem;
+    output [31:0] data;
+    output        wren;
+    input  [31:0] q_dmem;
+
+    // Regfile
+    output        ctrl_writeEnable;
+    output [4:0]  ctrl_writeReg;
+    output [4:0]  ctrl_readRegA;
+    output [4:0]  ctrl_readRegB;
+    output [31:0] data_writeReg;
+    input  [31:0] data_readRegA;
+    input  [31:0] data_readRegB;
+
     // ==================== PC ====================
     wire [31:0] pc;
     wire [31:0] pc_next;
@@ -158,13 +183,12 @@ module processor(
     wire overflow_any   = overflow_add | overflow_sub | overflow_addi;
 
     // ==================== PC / branch control ====================
-    wire [31:0] pc_seq = pc_next; //  pc + 4
 
     // modified offset
     wire [31:0] branch_offset = {{13{immediate[16]}}, immediate, 2'b00};
     wire [31:0] pc_branch;
     cla32 pc_branch_adder(
-        .num1(pc_seq), .num2(branch_offset), .cin(1'b0),
+        .num1(pc_next), .num2(branch_offset), .cin(1'b0),
         .sum(pc_branch), .cout()
     );
 
@@ -179,17 +203,11 @@ module processor(
     wire take_abs_j = op_j | op_jal | take_bex;
     wire take_jr    = op_jr;
 
-    // multiple level mux to choose PC
-    wire [31:0] pc_after_branch = take_branch ? pc_branch      : pc_seq;
-    wire [31:0] pc_after_jr     = take_jr     ? pc_jr_target   : pc_after_branch;
-    wire [31:0] pc_after_j      = take_abs_j  ? pc_jump_target : pc_after_jr;
-
     // ==== default path for next_pc_final  ====
     assign next_pc_final = (take_abs_j) ? pc_jump_target :
                            (take_jr)    ? pc_jr_target   :
                            (take_branch)? pc_branch      :
-                           pc_next; // seq
-
+                           pc_next; 
 
     wire [4:0] readA_sel_jr   = rd;
     wire [4:0] readA_sel_bex  = 5'd30;
@@ -250,4 +268,3 @@ module processor(
     wire [31:0] wdata_after_jal      = we_jal      ? jal_ra          : wdata_after_setx;
     assign data_writeReg = wdata_after_jal;
 endmodule
-
